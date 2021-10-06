@@ -27,3 +27,8 @@ def calculate_avg_of_sample(sample_array, sample_width, basic_width):
         sample_based_average_list.append(avg)
 
     return sample_based_average_list
+
+
+def convert_to_percentage(values):
+    values = np.array(values) * 100
+    return values
