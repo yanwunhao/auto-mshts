@@ -64,4 +64,3 @@ for sample in sd_groups:
     RESULT_LIST.append(result)
 
 RESULT_LIST = np.array(RESULT_LIST)
-input()
