@@ -39,4 +39,3 @@ for y_data in y_data_group:
     min_index = error_of_sampling_y.index(min_error)
     ec50 = math.pow(10, sampling_x[min_index])
     print('EC50 is ' + str(ec50))
-input()
