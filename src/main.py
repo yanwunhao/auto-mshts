@@ -179,6 +179,7 @@ for SAMPLE in FULL_RESULT_LIST:
     csv_writer_grouped.writerow(["Sample " + str(sample_num)])
     for repeat in SAMPLE:
         csv_writer_grouped.writerow(repeat)
+    csv_writer_grouped.writerow("")
     ec50_result_list = []
     for ec50_index in EC50_LIST[sample_num-1]:
         ec50_result_list.append(10**ec50_index)
@@ -186,3 +187,11 @@ for SAMPLE in FULL_RESULT_LIST:
     csv_writer_grouped.writerow([np.power(10, EC50_AVG_LIST[sample_num-1])])
     csv_writer_grouped.writerow("")
 output_f_grouped.close()
+
+output_f_full = open("./output/" + output_directory + "/result_full.csv", "w")
+csv_writer_full = csv.writer(output_f_full)
+for line in sd_matrix:
+    csv_writer_full.writerow(line)
+output_f_full.close()
+
+print("Finished")
