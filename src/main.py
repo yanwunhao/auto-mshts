@@ -162,7 +162,7 @@ for SAMPLE in FULL_RESULT_LIST:
 
     ax.plot(avg, 0.5, 'o', color='black')
     ax.plot(x_sampling_avg, y_sampling_avg, color='black')
-    plt.savefig("./output/" + output_directory + "/figs" + "/Sample "+ str(sample_num))
+    plt.savefig("./output/" + output_directory + "/figs" + "/Sample " + str(sample_num))
     plt.cla()
     plt.close(fig)
 
@@ -184,7 +184,10 @@ for SAMPLE in FULL_RESULT_LIST:
     for ec50_index in EC50_LIST[sample_num-1]:
         ec50_result_list.append(10**ec50_index)
     csv_writer_grouped.writerow(ec50_result_list)
-    csv_writer_grouped.writerow([np.power(10, EC50_AVG_LIST[sample_num-1])])
+    average_ec50 = np.power(10, EC50_AVG_LIST[sample_num-1])
+    csv_writer_grouped.writerow([])
+    csv_writer_grouped.writerow(["Average EC50", "Std"])
+    csv_writer_grouped.writerow([average_ec50, np.std(ec50_result_list)])
     csv_writer_grouped.writerow("")
 output_f_grouped.close()
 

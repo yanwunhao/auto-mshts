@@ -2,12 +2,12 @@
   "rule": {
     "0h_datafile": "0h.csv",
     "24h_datafile": "24h.csv",
-    "output_directory": "test",
+    "output_directory": "toya",
     "sample_width": 12,
     "sample_height": 2,
     "dilution_protocol": 5,
     "basic_width": 2,
-    "control_number": [1, 15, 49, 63],
+    "control_number": [1, 15, 49],
     "initial_concentration": 300
   }
 }
