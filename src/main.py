@@ -1,7 +1,8 @@
-from util.io import read_setting_json, read_0h_data, read_24h_data
+from util.io import read_setting_json, read_0h_data, read_24h_data, draw_single_curve
 from util.convert import split_array_into_samples, calculate_avg_of_sample, convert_to_percentage
-from util.calculus import calculate_summary_of_sample
+from util.calculus import calculate_summary_of_sample, fit_sigmoid_curve
 
+import matplotlib.pyplot as plt
 import numpy as np
 
 setting = read_setting_json()
@@ -88,7 +89,6 @@ for group in sd_groups:
             while x < sample_width:
                 data_buffer.append(group[y_index][x])
                 x += basic_width
-            print(data_buffer)
             sample_buffer.append(data_buffer)
             data_buffer = []
             x_index += 1
@@ -97,3 +97,45 @@ for group in sd_groups:
     FULL_RESULT_LIST.append(sample_buffer)
 
 FULL_RESULT_LIST = np.array(FULL_RESULT_LIST, dtype=float)
+
+x_data = [300, 60, 12, 2.4, 0.48, 0.096]
+
+optional_color = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'purple']
+
+sample_num = 0
+for SAMPLE in FULL_RESULT_LIST:
+    sample_num += 1
+    fig, ax = plt.subplots()
+    index = 0
+    ax.set_title('Sample '+str(sample_num))
+
+    x_buffer = []
+    x_sampling_buffer = []
+    y_sampling_buffer = []
+
+    for repeat in SAMPLE:
+        x, y, x_sampling, y_sampling = fit_sigmoid_curve(x_data, repeat)
+        x_buffer.append(x)
+        x_sampling_buffer.append(x_sampling)
+        y_sampling_buffer.append(y_sampling)
+        draw_single_curve(ax, x, y, x_sampling, y_sampling, optional_color[index])
+        index += 1
+
+    avg = np.mean(x_buffer)
+
+    x_sampling_buffer = np.array(x_sampling_buffer).T
+    y_sampling_buffer = np.array(y_sampling_buffer).T
+
+    x_sampling_avg = []
+    y_sampling_avg = []
+
+    for line in x_sampling_buffer:
+        x_sampling_avg.append(np.mean(line))
+
+    for line in y_sampling_buffer:
+        y_sampling_avg.append(np.mean(line))
+
+    ax.plot(avg, 0.5, 'o', color='black')
+    ax.plot(x_sampling_avg, y_sampling_avg, color='black')
+    ax.legend()
+    plt.show()

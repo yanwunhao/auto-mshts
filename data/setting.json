@@ -4,7 +4,7 @@
     "24h_datafile": "24h.csv",
     "sample_width": 12,
     "sample_height": 2,
-    "dilution_protocol": 5,
+    "dilution_protocol": 2,
     "basic_width": 2,
     "control_number": [1, 15, 49, 63]
   }

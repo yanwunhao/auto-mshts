@@ -2,6 +2,8 @@ import csv
 import numpy as np
 import json
 
+import matplotlib.pyplot as plt
+
 
 def read_setting_json():
     with open('./data/setting.json') as setting_f:
@@ -28,3 +30,8 @@ def read_24h_data():
         oneday_data_f.close()
     flatten_data = np.array(data).flatten()
     return flatten_data
+
+
+def draw_single_curve(ax, x, y, x_sampling, y_sampling, color):
+    ax.plot(x, y, 'o', color=color)
+    ax.plot(x_sampling, y_sampling, color=color)
