@@ -4,6 +4,7 @@ from util.calculus import calculate_summary_of_sample, fit_sigmoid_curve
 
 import matplotlib.pyplot as plt
 import numpy as np
+import csv
 
 setting = read_setting_json()
 setting = setting["rule"]
@@ -23,6 +24,22 @@ basic_width = setting["basic_width"]
 
 # number of each control group
 control_number_list = setting["control_number"]
+
+# output directory
+output_directory = setting["output_directory"]
+
+# import initial concentration and calculate x_data
+initial_concentration = setting["initial_concentration"]
+
+repeat_times = int(sample_width / basic_width)
+
+x_data = []
+
+current_concentration = initial_concentration
+for i in range(repeat_times):
+    x_data.append(current_concentration)
+    current_concentration /= dilution_protocol
+
 
 # load raw data
 initial_sd_data = read_0h_data()
@@ -98,9 +115,11 @@ for group in sd_groups:
 
 FULL_RESULT_LIST = np.array(FULL_RESULT_LIST, dtype=float)
 
-x_data = [300, 60, 12, 2.4, 0.48, 0.096]
 
 optional_color = ['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'purple']
+
+EC50_LIST = []
+EC50_AVG_LIST = []
 
 sample_num = 0
 for SAMPLE in FULL_RESULT_LIST:
@@ -121,8 +140,14 @@ for SAMPLE in FULL_RESULT_LIST:
         draw_single_curve(ax, x, y, x_sampling, y_sampling, optional_color[index])
         index += 1
 
+    EC50_LIST.append(x_buffer)
+
+    # draw the average result
     avg = np.mean(x_buffer)
 
+    EC50_AVG_LIST.append(avg)
+
+    # draw the average curve
     x_sampling_buffer = np.array(x_sampling_buffer).T
     y_sampling_buffer = np.array(y_sampling_buffer).T
 
@@ -137,5 +162,27 @@ for SAMPLE in FULL_RESULT_LIST:
 
     ax.plot(avg, 0.5, 'o', color='black')
     ax.plot(x_sampling_avg, y_sampling_avg, color='black')
-    ax.legend()
-    plt.show()
+    plt.savefig("./output/" + output_directory + "/figs" + "/Sample "+ str(sample_num))
+    plt.cla()
+    plt.close(fig)
+
+
+# output grouped result
+output_f_grouped = open("./output/" + output_directory + "/result_grouped.csv", "w")
+csv_writer_grouped = csv.writer(output_f_grouped)
+csv_writer_grouped.writerow(["initial concentration: " + str(initial_concentration), "dilution protocol: " + str(dilution_protocol)])
+csv_writer_grouped.writerow("")
+sample_num = 0
+for SAMPLE in FULL_RESULT_LIST:
+    SAMPLE = SAMPLE.T
+    sample_num += 1
+    csv_writer_grouped.writerow(["Sample " + str(sample_num)])
+    for repeat in SAMPLE:
+        csv_writer_grouped.writerow(repeat)
+    ec50_result_list = []
+    for ec50_index in EC50_LIST[sample_num-1]:
+        ec50_result_list.append(10**ec50_index)
+    csv_writer_grouped.writerow(ec50_result_list)
+    csv_writer_grouped.writerow([np.power(10, EC50_AVG_LIST[sample_num-1])])
+    csv_writer_grouped.writerow("")
+output_f_grouped.close()
